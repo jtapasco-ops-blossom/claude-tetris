@@ -1,0 +1,75 @@
+name: Claude Issue Triage
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  contents: read
+  issues: write
+  id-token: write
+
+jobs:
+  triage:
+    # Skip bot-authored issues to avoid automation loops
+    if: github.event.issue.user.type != 'Bot'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      # Idempotently ensure all triage labels exist before Claude runs.
+      # gh issue edit --add-label fails silently on non-existent labels.
+      - name: Ensure labels exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          create() { gh label create "$1" --color "$2" --description "$3" --force; }
+          create "bug"              "d73a4a" "Algo no funciona"
+          create "enhancement"      "a2eeef" "Mejora de una función existente"
+          create "feature"          "0e8a16" "Nueva funcionalidad"
+          create "documentation"    "0075ca" "Mejoras o adiciones a la documentación"
+          create "question"         "d876e3" "Se solicita más información"
+          create "invalid"          "e4e669" "Esto no parece correcto"
+          create "good first issue" "7057ff" "Bueno para empezar"
+          create "help wanted"      "008672" "Se busca ayuda"
+          create "performance"      "fbca04" "Relacionado con rendimiento"
+          create "refactor"         "c5def5" "Reestructuración de código"
+
+      - name: Run Claude triage
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: >-
+            --allowed-tools "Bash(gh issue edit:*),Bash(gh issue comment:*),Bash(gh issue view:*),Bash(gh label list:*)"
+          prompt: |
+            Eres el clasificador automático de issues del repositorio
+            ${{ github.repository }}, un juego de Tetris en JavaScript vanilla
+            (archivos clave: game.js, index.html, style.css).
+
+            Analiza el siguiente issue:
+            - Número: ${{ github.event.issue.number }}
+            - Título: ${{ github.event.issue.title }}
+            - Cuerpo:
+            ${{ github.event.issue.body }}
+
+            TAREA 1 — Etiquetas:
+            Elige entre 1 y 3 etiquetas SOLO de esta lista exacta:
+            bug, enhancement, feature, documentation, question, invalid,
+            good first issue, help wanted, performance, refactor.
+            No inventes etiquetas nuevas. Aplícalas con:
+            gh issue edit ${{ github.event.issue.number }} --add-label "etiqueta1,etiqueta2"
+
+            TAREA 2 — Comentario diagnóstico (EN ESPAÑOL):
+            Publica UN comentario con:
+            1) Resumen breve del problema o solicitud.
+            2) Enfoque de implementación sugerido, citando los archivos
+               reales (game.js, index.html, style.css) cuando aplique.
+            3) Si falta información o el issue es ininteligible, aplica
+               "question" o "invalid" y pide aclaración en español.
+            Publícalo con:
+            gh issue comment ${{ github.event.issue.number }} --body "..."
+
+            No modifiques el código ni el cuerpo del issue. Solo etiqueta y comenta.
