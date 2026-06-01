@@ -39,8 +39,10 @@ const overlay = document.getElementById('overlay');
 const overlayTitle = document.getElementById('overlay-title');
 const overlayScore = document.getElementById('overlay-score');
 const restartBtn = document.getElementById('restart-btn');
+const gravityBtn = document.getElementById('gravity-btn');
 
 let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
+let gravityCharges, gravityFlashAlpha, gravityAnimating;
 
 function createBoard() {
   return Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
@@ -108,8 +110,64 @@ function clearLines() {
     score += (LINE_SCORES[cleared] || 0) * level;
     level = Math.floor(lines / 10) + 1;
     dropInterval = Math.max(100, 1000 - (level - 1) * 90);
+    if (lines % 3 === 0) gravityCharges = Math.min(3, gravityCharges + 1);
+    updateHUD();
+    updateGravityUI();
+  }
+}
+
+function applyGravityCompact() {
+  for (let c = 0; c < COLS; c++) {
+    const blocks = [];
+    for (let r = 0; r < ROWS; r++) {
+      if (board[r][c] !== 0) blocks.push(board[r][c]);
+    }
+    for (let r = 0; r < ROWS; r++) {
+      board[r][c] = r < ROWS - blocks.length ? 0 : blocks[r - (ROWS - blocks.length)];
+    }
+  }
+}
+
+function clearLinesCombo() {
+  let cleared = 0;
+  for (let r = ROWS - 1; r >= 0; r--) {
+    if (board[r].every(v => v !== 0)) {
+      board.splice(r, 1);
+      board.unshift(new Array(COLS).fill(0));
+      cleared++;
+      r++;
+    }
+  }
+  if (cleared) {
+    lines += cleared;
+    score += (LINE_SCORES[cleared] || 0) * level * 2;
+    level = Math.floor(lines / 10) + 1;
+    dropInterval = Math.max(100, 1000 - (level - 1) * 90);
     updateHUD();
   }
+}
+
+function updateGravityUI() {
+  gravityBtn.textContent = `GRAVEDAD [${gravityCharges}]`;
+  gravityBtn.disabled = gravityCharges === 0 || paused || gameOver || gravityAnimating;
+}
+
+function activateGravity() {
+  if (gravityCharges <= 0 || paused || gameOver || gravityAnimating) return;
+  gravityCharges--;
+  gravityAnimating = true;
+  gravityFlashAlpha = 0.55;
+  updateGravityUI();
+  setTimeout(() => {
+    applyGravityCompact();
+    clearLinesCombo();
+    gravityFlashAlpha = 0.25;
+    setTimeout(() => {
+      gravityFlashAlpha = 0;
+      gravityAnimating = false;
+      updateGravityUI();
+    }, 200);
+  }, 200);
 }
 
 function ghostY() {
@@ -188,6 +246,10 @@ function drawGrid() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawGrid();
+  if (gravityFlashAlpha > 0) {
+    ctx.fillStyle = `rgba(100, 120, 255, ${gravityFlashAlpha})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
 
   // board
   for (let r = 0; r < ROWS; r++)
@@ -221,6 +283,7 @@ function drawNext() {
 function endGame() {
   gameOver = true;
   cancelAnimationFrame(animId);
+  updateGravityUI();
   overlayTitle.textContent = 'GAME OVER';
   overlayScore.textContent = `Puntuación: ${score.toLocaleString()}`;
   overlay.classList.remove('hidden');
@@ -268,9 +331,13 @@ function init() {
   dropInterval = 1000;
   dropAccum = 0;
   lastTime = performance.now();
+  gravityCharges = 0;
+  gravityFlashAlpha = 0;
+  gravityAnimating = false;
   next = randomPiece();
   spawn();
   updateHUD();
+  updateGravityUI();
   overlay.classList.add('hidden');
   cancelAnimationFrame(animId);
   animId = requestAnimationFrame(loop);
@@ -297,11 +364,15 @@ document.addEventListener('keydown', e => {
       e.preventDefault();
       hardDrop();
       break;
+    case 'KeyG':
+      activateGravity();
+      break;
   }
   updateHUD();
 });
 
 restartBtn.addEventListener('click', init);
+gravityBtn.addEventListener('click', activateGravity);
 
 init();
 
