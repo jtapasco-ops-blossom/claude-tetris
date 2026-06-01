@@ -169,7 +169,7 @@ function drawBlock(context, x, y, colorIndex, size, alpha) {
 }
 
 function drawGrid() {
-  ctx.strokeStyle = '#22222e';
+  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--grid-color').trim();
   ctx.lineWidth = 0.5;
   for (let c = 1; c < COLS; c++) {
     ctx.beginPath();
@@ -302,3 +302,24 @@ document.addEventListener('keydown', e => {
 restartBtn.addEventListener('click', init);
 
 init();
+
+// ---- Theme toggle ----
+const themeToggleBtn = document.getElementById('theme-toggle');
+
+function applyTheme(theme) {
+  if (theme === 'light') {
+    document.body.classList.add('light-mode');
+    themeToggleBtn.textContent = '🌙 Dark';
+  } else {
+    document.body.classList.remove('light-mode');
+    themeToggleBtn.textContent = '☀ Light';
+  }
+}
+
+themeToggleBtn.addEventListener('click', () => {
+  const next = document.body.classList.contains('light-mode') ? 'dark' : 'light';
+  localStorage.setItem('theme', next);
+  applyTheme(next);
+});
+
+applyTheme(localStorage.getItem('theme') || 'dark');
