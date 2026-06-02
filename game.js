@@ -28,6 +28,34 @@ const PIECES = [
 
 const LINE_SCORES = [0, 100, 300, 500, 800];
 
+// ---- Visual skins ----
+// Each skin defines its own 7-color palette (index 0 is null/empty) and a
+// `style` that drawBlock() branches on to render the canvas blocks.
+const SKINS = {
+  retro: {
+    name: 'Retro',
+    style: 'flat',
+    palette: COLORS, // current default palette
+  },
+  neon: {
+    name: 'Neon',
+    style: 'neon',
+    palette: [null, '#00f0ff', '#ffe600', '#ff00e5', '#00ff66', '#ff0033', '#3399ff', '#ff9100'],
+  },
+  pastel: {
+    name: 'Pastel',
+    style: 'pastel',
+    palette: [null, '#a8e6e3', '#fff2b3', '#e0c3f0', '#c3e8c8', '#f5c3c3', '#bcd4f0', '#ffd9a8'],
+  },
+  pixel: {
+    name: 'Pixel-art',
+    style: 'pixel',
+    palette: [null, '#2bb3c0', '#d9b53f', '#9e51b8', '#5fa86a', '#c95151', '#4a82c0', '#d68f3a'],
+  },
+};
+
+let activeSkin = 'retro';
+
 const canvas = document.getElementById('board');
 const ctx = canvas.getContext('2d');
 const nextCanvas = document.getElementById('next-canvas');
@@ -158,14 +186,77 @@ function updateHUD() {
 
 function drawBlock(context, x, y, colorIndex, size, alpha) {
   if (!colorIndex) return;
-  const color = COLORS[colorIndex];
+  const skin = SKINS[activeSkin] || SKINS.retro;
+  const color = skin.palette[colorIndex];
+  const px = x * size + 1;
+  const py = y * size + 1;
+  const s = size - 2;
+
+  context.save();
   context.globalAlpha = alpha ?? 1;
-  context.fillStyle = color;
-  context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
-  // highlight
-  context.fillStyle = 'rgba(255,255,255,0.12)';
-  context.fillRect(x * size + 1, y * size + 1, size - 2, 4);
-  context.globalAlpha = 1;
+
+  switch (skin.style) {
+    case 'neon': {
+      // Dark block body with a saturated colored glow.
+      context.shadowColor = color;
+      context.shadowBlur = 8;
+      context.fillStyle = '#0a0a0a';
+      context.fillRect(px, py, s, s);
+      // Bright inner core so the color reads through the glow.
+      context.shadowBlur = 12;
+      context.fillStyle = color;
+      context.fillRect(px + 3, py + 3, s - 6, s - 6);
+      context.shadowBlur = 0;
+      break;
+    }
+    case 'pastel': {
+      // Soft fill with rounded corners.
+      const r = Math.max(2, Math.floor(size * 0.2));
+      context.fillStyle = color;
+      context.beginPath();
+      if (typeof context.roundRect === 'function') {
+        context.roundRect(px, py, s, s, r);
+      } else {
+        context.rect(px, py, s, s);
+      }
+      context.fill();
+      // Gentle highlight stripe.
+      context.fillStyle = 'rgba(255,255,255,0.25)';
+      context.fillRect(px + r, py + 2, s - 2 * r, 3);
+      break;
+    }
+    case 'pixel': {
+      // Flat fill plus a darker dithered inner grid for a pixelated look.
+      context.fillStyle = color;
+      context.fillRect(px, py, s, s);
+      context.fillStyle = 'rgba(0,0,0,0.22)';
+      const cell = Math.max(3, Math.floor(size / 6));
+      for (let gy = 0; gy < s; gy += cell) {
+        for (let gx = 0; gx < s; gx += cell) {
+          // Checkerboard dithering.
+          if (((gx / cell) + (gy / cell)) % 2 === 0) {
+            context.fillRect(px + gx, py + gy, Math.min(cell, s - gx), Math.min(cell, s - gy));
+          }
+        }
+      }
+      // Light top-left edge for depth.
+      context.fillStyle = 'rgba(255,255,255,0.18)';
+      context.fillRect(px, py, s, 2);
+      context.fillRect(px, py, 2, s);
+      break;
+    }
+    case 'flat':
+    default: {
+      // Original Retro look: flat square + white highlight stripe.
+      context.fillStyle = color;
+      context.fillRect(px, py, s, s);
+      context.fillStyle = 'rgba(255,255,255,0.12)';
+      context.fillRect(px, py, s, 4);
+      break;
+    }
+  }
+
+  context.restore();
 }
 
 function drawGrid() {
@@ -325,3 +416,25 @@ themeToggleBtn.addEventListener('click', () => {
 });
 
 applyTheme(localStorage.getItem('theme') || 'dark');
+
+// ---- Skin selector ----
+const skinSelect = document.getElementById('skin-select');
+
+function applySkin(skin) {
+  if (!SKINS[skin]) skin = 'retro';
+  activeSkin = skin;
+  if (skinSelect) skinSelect.value = skin;
+  // Re-render immediately with the new palette/style.
+  draw();
+  drawNext();
+}
+
+if (skinSelect) {
+  skinSelect.addEventListener('change', () => {
+    const skin = skinSelect.value;
+    localStorage.setItem('tetris-skin', skin);
+    applySkin(skin);
+  });
+}
+
+applySkin(localStorage.getItem('tetris-skin') || 'retro');
