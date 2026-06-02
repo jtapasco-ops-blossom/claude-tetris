@@ -126,6 +126,24 @@ body {
   border-radius: 4px;
 }
 
+/* ---- Skin selector ---- */
+.skin-select {
+  background: var(--kbd-bg);
+  border: 1px solid var(--kbd-border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s, color 0.2s;
+}
+
+.skin-select:hover {
+  background: var(--canvas-border);
+}
+
 /* ---- Controles ---- */
 .controls ul {
   list-style: none;
