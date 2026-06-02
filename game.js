@@ -667,9 +667,13 @@ function applySkin(skin) {
   if (!SKINS[skin]) skin = 'retro';
   activeSkin = skin;
   if (skinSelect) skinSelect.value = skin;
-  // Re-render immediately with the new palette/style.
-  draw();
-  drawNext();
+  // Re-render immediately with the new palette/style, but only once the game
+  // has been initialized — at load time the start screen is shown and the
+  // board/current piece don't exist yet.
+  if (board && current) {
+    draw();
+    drawNext();
+  }
 }
 
 if (skinSelect) {
