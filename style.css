@@ -207,6 +207,81 @@ kbd {
   background: var(--accent-hover);
 }
 
+/* ---- Pause menu ---- */
+.pause-menu {
+  gap: 10px;
+  min-width: 200px;
+}
+
+.pause-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: var(--accent);
+}
+
+.menu-btn {
+  width: 100%;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: none;
+  border-radius: 6px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.15s;
+}
+
+.menu-btn:hover {
+  background: var(--accent-hover);
+}
+
+.menu-controls {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 0;
+  width: 100%;
+}
+
+.menu-controls.hidden {
+  display: none;
+}
+
+.menu-controls li {
+  font-size: 12px;
+  color: var(--controls-text);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.menu-level {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  width: 100%;
+}
+
+#start-level-select {
+  background: var(--kbd-bg);
+  border: 1px solid var(--kbd-border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
+}
+
+.overlay-box.hidden {
+  display: none;
+}
+
 /* ---- Theme toggle ---- */
 #theme-toggle {
   position: absolute;
