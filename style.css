@@ -190,7 +190,6 @@ kbd {
 }
 
 #restart-btn {
-  margin-top: 8px;
   background: var(--btn-bg);
   color: var(--btn-text);
   border: none;
@@ -205,6 +204,114 @@ kbd {
 
 #restart-btn:hover {
   background: var(--accent-hover);
+}
+
+/* ---- Records & name entry ---- */
+.name-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.name-entry.hidden {
+  display: none;
+}
+
+#name-input {
+  background: var(--kbd-bg);
+  border: 1px solid var(--kbd-border);
+  color: var(--text);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 14px;
+  font-family: 'Courier New', Courier, monospace;
+  text-align: center;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  width: 140px;
+}
+
+#save-score-btn,
+#reset-records-btn {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.15s;
+}
+
+#save-score-btn:hover,
+#reset-records-btn:hover {
+  background: var(--accent-hover);
+}
+
+.records {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.records.hidden,
+.overlay-actions.hidden {
+  display: none;
+}
+
+#records-table {
+  border-collapse: collapse;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  color: var(--text);
+}
+
+#records-table th {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--label-color);
+  font-weight: 600;
+  padding: 3px 10px;
+  text-align: right;
+}
+
+#records-table th:nth-child(2) {
+  text-align: left;
+}
+
+#records-table td {
+  padding: 3px 10px;
+  text-align: right;
+}
+
+#records-table td:nth-child(2) {
+  text-align: left;
+  text-transform: uppercase;
+}
+
+#records-table tr.highlight td {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+#records-table tbody:empty::after,
+.records-empty td {
+  color: var(--controls-text);
+}
+
+.records-stats {
+  display: flex;
+  gap: 16px;
+}
+
+.overlay-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
 }
 
 /* ---- Theme toggle ---- */
