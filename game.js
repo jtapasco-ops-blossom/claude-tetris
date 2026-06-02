@@ -509,6 +509,9 @@ function showStartScreen() {
   recordsEl.classList.remove('hidden');
   overlayActions.classList.remove('hidden');
   restartBtn.textContent = 'Jugar';
+  pauseMenu.classList.add('hidden');
+  menuControls.classList.add('hidden');
+  gameoverBox.classList.remove('hidden');
   overlay.classList.remove('hidden');
 }
 
