@@ -32,22 +32,6 @@
           <canvas id="next-canvas" width="120" height="120"></canvas>
         </div>
 
-        <div class="panel-section">
-          <span class="label">POWERS</span>
-          <button id="gravity-btn" class="power-btn" disabled>GRAVEDAD [0]</button>
-          <p class="power-hint"><kbd>G</kbd> activar</p>
-        </div>
-
-        <div class="panel-section">
-          <span class="label">SKIN</span>
-          <select id="skin-select" class="skin-select">
-            <option value="retro">Retro</option>
-            <option value="neon">Neon</option>
-            <option value="pastel">Pastel</option>
-            <option value="pixel">Pixel-art</option>
-          </select>
-        </div>
-
         <div class="panel-section controls">
           <span class="label">CONTROLS</span>
           <ul>
@@ -55,7 +39,6 @@
             <li><kbd>↑</kbd> rotar</li>
             <li><kbd>↓</kbd> bajar</li>
             <li><kbd>Space</kbd> caída</li>
-            <li><kbd>G</kbd> gravedad</li>
             <li><kbd>P</kbd> pausa</li>
           </ul>
         </div>
@@ -63,66 +46,10 @@
     </div>
 
     <div id="overlay" class="overlay hidden">
-      <div class="overlay-box" id="gameover-box">
+      <div class="overlay-box">
         <p id="overlay-title">GAME OVER</p>
         <p id="overlay-score"></p>
-
-        <div id="name-entry" class="name-entry hidden">
-          <span class="label">NUEVO RÉCORD</span>
-          <input id="name-input" type="text" maxlength="8" placeholder="TU NOMBRE" />
-          <button id="save-score-btn">Guardar</button>
-        </div>
-
-        <div id="records" class="records">
-          <span class="label">RÉCORDS</span>
-          <table id="records-table">
-            <thead>
-              <tr><th>#</th><th>Nombre</th><th>Score</th><th>Líneas</th></tr>
-            </thead>
-            <tbody id="records-body"></tbody>
-          </table>
-          <div class="records-stats">
-            <span class="label">MEJOR COMBO: <span id="best-combo">0</span></span>
-            <span class="label">MÁX LÍNEAS: <span id="max-lines">0</span></span>
-          </div>
-        </div>
-
-        <div class="overlay-actions">
-          <button id="restart-btn">Reiniciar</button>
-          <button id="reset-records-btn">Borrar récords</button>
-        </div>
-      </div>
-
-      <div class="overlay-box pause-menu" id="pause-menu">
-        <p class="pause-title">PAUSA</p>
-        <button class="menu-btn" id="resume-btn">Reanudar</button>
-        <button class="menu-btn" id="menu-restart-btn">Reiniciar</button>
-        <button class="menu-btn" id="controls-btn">Ver controles</button>
-
-        <ul id="menu-controls" class="menu-controls hidden">
-          <li><kbd>←</kbd><kbd>→</kbd> mover</li>
-          <li><kbd>↑</kbd> rotar</li>
-          <li><kbd>↓</kbd> bajar</li>
-          <li><kbd>Space</kbd> caída</li>
-          <li><kbd>G</kbd> gravedad</li>
-          <li><kbd>P</kbd> pausa</li>
-        </ul>
-
-        <div class="menu-level">
-          <label for="start-level-select" class="label">NIVEL INICIAL</label>
-          <select id="start-level-select">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-          </select>
-        </div>
+        <button id="restart-btn">Reiniciar</button>
       </div>
     </div>
   </div>
