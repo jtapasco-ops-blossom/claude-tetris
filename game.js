@@ -4,16 +4,94 @@ const COLS = 10;
 const ROWS = 20;
 const BLOCK = 30;
 
-const COLORS = [
-  null,
-  '#4dd0e1', // I - cyan
-  '#ffd54f', // O - yellow
-  '#ba68c8', // T - purple
-  '#81c784', // S - green
-  '#e57373', // Z - red
-  '#5b9bd5', // J - pale blue
-  '#ffb74d', // L - orange
-];
+const SKINS = {
+  retro: {
+    name: 'Retro',
+    colors: [null, '#4dd0e1', '#ffd54f', '#ba68c8', '#81c784', '#e57373', '#5b9bd5', '#ffb74d'],
+    drawBlock(ctx, x, y, colorIdx, size, alpha) {
+      const color = this.colors[colorIdx];
+      ctx.globalAlpha = alpha ?? 1;
+      ctx.fillStyle = color;
+      ctx.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.12)';
+      ctx.fillRect(x * size + 1, y * size + 1, size - 2, 4);
+      ctx.globalAlpha = 1;
+    },
+  },
+  neon: {
+    name: 'Neon',
+    colors: [null, '#00ffff', '#ffff00', '#ff00ff', '#00ff88', '#ff3333', '#3399ff', '#ff8800'],
+    drawBlock(ctx, x, y, colorIdx, size, alpha) {
+      const color = this.colors[colorIdx];
+      ctx.save();
+      ctx.globalAlpha = alpha ?? 1;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 14;
+      ctx.fillStyle = color;
+      ctx.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = 'rgba(255,255,255,0.22)';
+      ctx.fillRect(x * size + 4, y * size + 4, size - 8, size - 8);
+      ctx.restore();
+    },
+  },
+  pastel: {
+    name: 'Pastel',
+    colors: [null, '#b5ead7', '#ffdac1', '#ffb7b2', '#ff9aa2', '#c7ceea', '#e2b4bd', '#ffe4b5'],
+    drawBlock(ctx, x, y, colorIdx, size, alpha) {
+      const color = this.colors[colorIdx];
+      ctx.save();
+      ctx.globalAlpha = alpha ?? 1;
+      const bx = x * size + 2;
+      const by = y * size + 2;
+      const bw = size - 4;
+      const bh = size - 4;
+      const r = Math.min(6, bw / 2, bh / 2);
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(bx + r, by);
+      ctx.lineTo(bx + bw - r, by);
+      ctx.quadraticCurveTo(bx + bw, by, bx + bw, by + r);
+      ctx.lineTo(bx + bw, by + bh - r);
+      ctx.quadraticCurveTo(bx + bw, by + bh, bx + bw - r, by + bh);
+      ctx.lineTo(bx + r, by + bh);
+      ctx.quadraticCurveTo(bx, by + bh, bx, by + bh - r);
+      ctx.lineTo(bx, by + r);
+      ctx.quadraticCurveTo(bx, by, bx + r, by);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.fillRect(bx + 3, by + 3, bw - 6, 4);
+      ctx.restore();
+    },
+  },
+  'pixel-art': {
+    name: 'Pixel',
+    colors: [null, '#44bbcc', '#ddcc44', '#aa55cc', '#55aa66', '#cc4444', '#4477bb', '#dd8833'],
+    drawBlock(ctx, x, y, colorIdx, size, alpha) {
+      const color = this.colors[colorIdx];
+      ctx.save();
+      ctx.globalAlpha = alpha ?? 1;
+      const bx = x * size;
+      const by = y * size;
+      ctx.fillStyle = color;
+      ctx.fillRect(bx + 1, by + 1, size - 2, size - 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.fillRect(bx + 1, by + 1, size - 2, 2);
+      ctx.fillRect(bx + 1, by + 1, 2, size - 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.25)';
+      ctx.fillRect(bx + 1, by + size - 3, size - 2, 2);
+      ctx.fillRect(bx + size - 3, by + 1, 2, size - 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.12)';
+      for (let py = 5; py < size - 4; py += 5)
+        for (let px = 5; px < size - 4; px += 5)
+          ctx.fillRect(bx + px, by + py, 2, 2);
+      ctx.restore();
+    },
+  },
+};
+
+let currentSkin = 'retro';
 
 const PIECES = [
   null,
@@ -158,14 +236,7 @@ function updateHUD() {
 
 function drawBlock(context, x, y, colorIndex, size, alpha) {
   if (!colorIndex) return;
-  const color = COLORS[colorIndex];
-  context.globalAlpha = alpha ?? 1;
-  context.fillStyle = color;
-  context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
-  // highlight
-  context.fillStyle = 'rgba(255,255,255,0.12)';
-  context.fillRect(x * size + 1, y * size + 1, size - 2, 4);
-  context.globalAlpha = 1;
+  SKINS[currentSkin].drawBlock(context, x, y, colorIndex, size, alpha);
 }
 
 function drawGrid() {
@@ -304,6 +375,24 @@ document.addEventListener('keydown', e => {
 restartBtn.addEventListener('click', init);
 
 init();
+
+// ---- Skin system ----
+function applySkin(skinKey) {
+  if (!SKINS[skinKey]) return;
+  document.body.classList.remove('skin-retro', 'skin-neon', 'skin-pastel', 'skin-pixel-art');
+  document.body.classList.add(`skin-${skinKey}`);
+  currentSkin = skinKey;
+  localStorage.setItem('skin', skinKey);
+  document.querySelectorAll('.skin-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.skin === skinKey);
+  });
+}
+
+document.querySelectorAll('.skin-btn').forEach(btn => {
+  btn.addEventListener('click', () => applySkin(btn.dataset.skin));
+});
+
+applySkin(localStorage.getItem('skin') || 'retro');
 
 // ---- Theme toggle ----
 const themeToggleBtn = document.getElementById('theme-toggle');

@@ -207,6 +207,72 @@ kbd {
   background: var(--accent-hover);
 }
 
+/* ---- Skin selector ---- */
+.skin-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.skin-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.skin-btn {
+  background: var(--kbd-bg);
+  border: 1px solid var(--kbd-border);
+  color: var(--text);
+  border-radius: 5px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.skin-btn:hover {
+  background: var(--canvas-border);
+}
+
+.skin-btn.active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+/* ---- Skin-specific overrides ---- */
+body.skin-neon {
+  --grid-color: #0a0a1e;
+  --canvas-bg: #000010;
+  --canvas-border: #1a0a3a;
+  --canvas-shadow: rgba(120, 0, 255, 0.5);
+}
+
+body.skin-neon #board,
+body.skin-neon #next-canvas {
+  box-shadow: 0 0 40px rgba(100, 0, 200, 0.5);
+}
+
+body.skin-pastel {
+  --grid-color: #ddd0ee;
+  --canvas-bg: #f8f2ff;
+  --canvas-border: #d4c0e8;
+  --canvas-shadow: rgba(160, 100, 200, 0.15);
+}
+
+body.skin-pixel-art {
+  --grid-color: #111118;
+  --canvas-bg: #0c0c14;
+  --canvas-border: #222230;
+}
+
+body.skin-pixel-art #board,
+body.skin-pixel-art #next-canvas {
+  image-rendering: pixelated;
+}
+
 /* ---- Theme toggle ---- */
 #theme-toggle {
   position: absolute;
