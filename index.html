@@ -26,6 +26,10 @@
           <span class="label">LEVEL</span>
           <span class="value" id="level">1</span>
         </div>
+        <div class="panel-section">
+          <span class="label">COMBO</span>
+          <span class="value" id="combo">0</span>
+        </div>
 
         <div class="panel-section">
           <span class="label">NEXT</span>
@@ -45,10 +49,56 @@
       </aside>
     </div>
 
+    <!-- Records below the game, visible on start screen -->
+    <div id="records-section">
+      <div class="records-header">
+        <span class="label">MEJORES PUNTUACIONES</span>
+        <button id="reset-records-btn" class="btn-small">Borrar</button>
+      </div>
+      <div id="records-table-wrap">
+        <table id="records-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nombre</th>
+              <th>Score</th>
+              <th>Combo</th>
+              <th>Líneas</th>
+            </tr>
+          </thead>
+          <tbody id="records-body"></tbody>
+        </table>
+      </div>
+    </div>
+
     <div id="overlay" class="overlay hidden">
       <div class="overlay-box">
         <p id="overlay-title">GAME OVER</p>
         <p id="overlay-score"></p>
+
+        <!-- Name entry — shown only when score qualifies for top 5 -->
+        <div id="record-entry" class="hidden">
+          <p class="new-record-label">¡Entraste al Top 5!</p>
+          <input id="player-name" type="text" maxlength="12" placeholder="Tu nombre" autocomplete="off" spellcheck="false" />
+          <button id="save-record-btn" class="btn-accent">Guardar</button>
+        </div>
+
+        <!-- Leaderboard inside overlay (only on game over) -->
+        <div id="overlay-records" class="hidden">
+          <table class="overlay-records-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Score</th>
+                <th>Combo</th>
+                <th>Líneas</th>
+              </tr>
+            </thead>
+            <tbody id="overlay-records-body"></tbody>
+          </table>
+        </div>
+
         <button id="restart-btn">Reiniciar</button>
       </div>
     </div>

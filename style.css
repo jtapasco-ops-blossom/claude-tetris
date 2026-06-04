@@ -207,6 +207,149 @@ kbd {
   background: var(--accent-hover);
 }
 
+/* ---- Records section ---- */
+#records-section {
+  width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.records-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#records-table-wrap {
+  overflow: hidden;
+  border-radius: 4px;
+  border: 1px solid var(--canvas-border);
+}
+
+#records-table,
+.overlay-records-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+}
+
+#records-table th,
+.overlay-records-table th {
+  background: var(--canvas-bg);
+  color: var(--label-color);
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: 600;
+  padding: 6px 10px;
+  text-align: left;
+}
+
+#records-table td,
+.overlay-records-table td {
+  padding: 6px 10px;
+  border-top: 1px solid var(--canvas-border);
+  color: var(--text);
+}
+
+#records-table tr:hover td,
+.overlay-records-table tr:hover td {
+  background: rgba(122, 162, 247, 0.07);
+}
+
+.record-highlight td {
+  background: rgba(122, 162, 247, 0.18) !important;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.rank {
+  color: var(--label-color);
+  width: 24px;
+}
+
+.rec-score {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.no-records {
+  text-align: center;
+  color: var(--label-color);
+  font-size: 12px;
+  padding: 12px;
+}
+
+.btn-small {
+  background: transparent;
+  border: 1px solid var(--kbd-border);
+  color: var(--controls-text);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-small:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---- Record entry (overlay name input) ---- */
+.new-record-label {
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+#player-name {
+  background: var(--kbd-bg);
+  border: 1px solid var(--kbd-border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
+  padding: 8px 14px;
+  text-align: center;
+  width: 180px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+#player-name:focus {
+  border-color: var(--accent);
+}
+
+.btn-accent {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 22px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.15s;
+}
+
+.btn-accent:hover {
+  background: var(--accent-hover);
+}
+
+/* Overlay records table */
+#overlay-records {
+  margin-top: 4px;
+  width: 320px;
+  border: 1px solid var(--canvas-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
 /* ---- Theme toggle ---- */
 #theme-toggle {
   position: absolute;
